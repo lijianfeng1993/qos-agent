@@ -40,10 +40,11 @@ func (this *QosController) GetChains(table string) (chans []string, err error) {
 	}
 	return chans, nil
 }
-
+/*
 func (this *QosController) InsertRule(table string, chain string, rulespec ...string) error{
 
 }
+*/
 
 
 
