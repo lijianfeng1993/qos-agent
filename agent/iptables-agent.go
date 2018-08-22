@@ -13,7 +13,7 @@ type QosIptables struct {
 
 func NewQosIptables() *QosIptables {
 	return &QosIptables{
-		networkInterface: globalInterface,
+		networkInterface: "ens160",
 	}
 }
 
