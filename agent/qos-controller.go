@@ -40,11 +40,15 @@ func (this *QosController) GetChains(table string) (chans []string, err error) {
 	}
 	return chans, nil
 }
-/*
-func (this *QosController) InsertRule(table string, chain string, rulespec ...string) error{
 
+func (this *QosController) InsertRule(table string, chain string, pos int, rulespec ...string) error{
+	err := this.InsertRule(table, chain, pos, rulespec)
+	if err != nil {
+		return errors.New(fmt.Sprintf("InsertRule(): %s \n", err.Error()))
+	}
+	return nil
 }
-*/
+
 
 
 
