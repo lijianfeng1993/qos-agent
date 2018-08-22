@@ -1,8 +1,12 @@
 package main
 
-import "qos-agent/agent"
+import (
+	"qos-agent/agent"
+	"fmt"
+)
 
 func main() {
 	qosiptables := agent.NewQosIptables()
-	qosiptables.InitIptables()
+	listchan := qosiptables.InitIptables()
+	fmt.Println(listchan)
 }

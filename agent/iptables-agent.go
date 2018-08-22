@@ -28,6 +28,6 @@ func (this *QosIptables) InitIptables() error{
 	if err != nil {
 		return errors.New(fmt.Sprintf("NewQosIptables() is faild. \n" + "ListChains(): %s", err.Error()))
 	}
-	fmt.Println(list_chan)
+	return list_chan
 }
 
