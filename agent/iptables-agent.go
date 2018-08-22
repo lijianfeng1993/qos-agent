@@ -11,20 +11,23 @@ type QosIptables struct {
 	networkInterface string
 }
 
-func InitIptables() (*QosIptables,error){
-	network := "ens160"
-	qosIptables, err := iptables.NewWithProtocol(iptables.ProtocolIPv4)
-	if err != nil {
-		return _, errors.New(fmt.Sprintf("InitIptables() is failed. \n" + "   NewWithProtocol(): %s", err.Error()))
+func NewQosIptables() *QosIptables {
+	return &QosIptables{
+		networkInterface: "ens160",
 	}
-	return &QosIptables{networkInterface: network, qosIptables: qosIptables,}, nil
 }
 
+func (this *QosIptables) InitIptables() (err error){
 
+	this.qosIptables, err = iptables.NewWithProtocol(iptables.ProtocolIPv4)
+	if err != nil {
+		return  errors.New(fmt.Sprintf("NewQosIptables() is failed. \n" + "   NewWithProtocol(): %s", err.Error()))
+	}
 
+	return nil
+}
 
-/*
-func (ipt *QosIptables) GetChans(table string) (chans []string, err error) {
+func (this *QosIptables) GetChans(table string) (chans []string, err error) {
 	chans, err = this.qosIptables.ListChains(table)
 	if err != nil {
 		chans := []string {""}
@@ -32,11 +35,8 @@ func (ipt *QosIptables) GetChans(table string) (chans []string, err error) {
 	}
 	return chans, nil
 }
-*/
 
-//func (this *QosIptables) InsertRule() error {
-//	err = this.InsertRule()
-//}
+
 
 
 
