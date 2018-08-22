@@ -43,6 +43,11 @@ func (this *QosController) GetChains(table string) (chans []string, err error) {
 
 func (this *QosController) InsertRule(table string, chain string, pos int, rulespec ...string) error{
 	fmt.Println(rulespec)
+	length : =len(rulespec)
+	for i=0; i<length; i++ {
+		
+		
+	}
 	/*
 	err := this.InsertRule(table, chain, pos, rulespec)
 
