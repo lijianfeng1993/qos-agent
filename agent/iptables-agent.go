@@ -11,24 +11,33 @@ type QosIptables struct {
 	networkInterface string
 }
 
-func NewQosIptables() *QosIptables {
-	return &QosIptables{
-		networkInterface: "ens160",
+func InitIptables() (*QosIptables,error){
+	network := "ens160"
+	qosIptables, err := iptables.NewWithProtocol(iptables.ProtocolIPv4)
+	if err != nil {
+		return _, errors.New(fmt.Sprintf("InitIptables() is failed. \n" + "   NewWithProtocol(): %s", err.Error()))
 	}
+	return &QosIptables{networkInterface: network, qosIptables: qosIptables,}, nil
 }
 
-func (this *QosIptables) InitIptables() error{
-	err := errors.New("")
-	this.qosIptables, err = iptables.NewWithProtocol(iptables.ProtocolIPv4)
-	if err != nil {
-		return errors.New(fmt.Sprintf("NewQosIptables() is failed. \n" + "   NewWithProtocol(): %s", err.Error()))
-	}
 
-	list_chan, err := this.qosIptables.ListChains("filter")
+
+
+/*
+func (ipt *QosIptables) GetChans(table string) (chans []string, err error) {
+	chans, err = this.qosIptables.ListChains(table)
 	if err != nil {
-		return errors.New(fmt.Sprintf("NewQosIptables() is faild. \n" + "ListChains(): %s", err.Error()))
+		chans := []string {""}
+		return chans,errors.New(fmt.Sprintf("ListChans(): %s", err.Error()))
 	}
-	fmt.Println(list_chan)
-	return err
+	return chans, nil
 }
+*/
+
+//func (this *QosIptables) InsertRule() error {
+//	err = this.InsertRule()
+//}
+
+
+
 

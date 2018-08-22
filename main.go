@@ -6,7 +6,21 @@ import (
 )
 
 func main() {
-	qosiptables := agent.NewQosIptables()
-	listchan := qosiptables.InitIptables()
-	fmt.Println(listchan)
+	//qosiptables, err := agent.InitIptables()
+	qosiptables, err := agent.InitIptables()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(qosiptables)
+
+
+		/*
+	chans, err :=qosiptables.GetChans("nat")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(chans)
+	*/
+
+
 }
