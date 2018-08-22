@@ -6,10 +6,10 @@ import (
 )
 
 func main() {
-	qosiptables := agent.NewQosIptables()
+	qosiptables := agent.NewQosController()
 	qosiptables.InitIptables()
 
-	chans, err :=qosiptables.GetChans("nat")
+	chans, err :=qosiptables.GetChains("nat")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
