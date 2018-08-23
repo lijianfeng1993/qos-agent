@@ -8,21 +8,21 @@ import (
 )
 
 type QosController struct {
-	qosIptables *iptables.IPTables
-	qosTc string
+	QosIptables *iptables.IPTables
+	QosTc string
 }
 
 func NewQosController() *QosController {
 	qosIptables, _ := iptables.NewWithProtocol(iptables.ProtocolIPv4)
 	qoscon := &QosController{
-		qosIptables: qosIptables,
-		qosTc: "tc",
+		QosIptables: qosIptables,
+		QosTc: "tc",
 	}
 	return qoscon
 }
 
 func (this *QosController) GetChains(table string) (chans []string, err error) {
-	chans, err = this.qosIptables.ListChains(table)
+	chans, err = this.QosIptables.ListChains(table)
 	if err != nil {
 		chains := []string {""}
 		return chains,errors.New(fmt.Sprintf("ListChans(): %s", err.Error()))
@@ -37,7 +37,7 @@ func (this *QosController) InsertRule(srcIp, dstIp, mark string) error{
 	//fmt.Println()
 	//err := this.qosIptables.Insert(table, chain, pos, strings.Replace(strings.Trim(fmt.Sprint(rulespec), "[]"), " ", ",", -1),)
 
-	err := this.qosIptables.Insert(
+	err := this.QosIptables.Insert(
 		"mangle",
 		"POSTROUTING",
 		1,
@@ -51,9 +51,25 @@ func (this *QosController) InsertRule(srcIp, dstIp, mark string) error{
 	if err != nil {
 		return errors.New(fmt.Sprintf("InsertRule(): %s \n", err.Error()))
 	}
-
 	return nil
 }
+
+func (this *QosController) DeleteRule(srcIP, dstIP, mark string) error {
+	err := this.QosIptables.Delete(
+		"mangle",
+		"POSTROUTING",
+		"-o",
+		"ens160",
+		"-d", fmt.Sprintf("%s", dstIP),
+		"-s", fmt.Sprintf("%s", srcIP),
+		"-j", "MARK",
+		"--set-mark", fmt.Sprintf("%s", mark),
+	)
+	if err != nil {
+		return errors.New(fmt.Sprintf("InsertRule(): %s \n", err.Error()))
+	}
+}
+
 
 
 
