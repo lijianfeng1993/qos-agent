@@ -4,6 +4,7 @@ import (
 	"github.com/coreos/go-iptables/iptables"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type QosController struct {
@@ -42,19 +43,16 @@ func (this *QosController) GetChains(table string) (chans []string, err error) {
 }
 
 func (this *QosController) InsertRule(table string, chain string, pos int, rulespec ...string) error{
-	fmt.Println(rulespec)
-	length : =len(rulespec)
-	for i=0; i<length; i++ {
-		
-		
-	}
-	/*
-	err := this.InsertRule(table, chain, pos, rulespec)
+	//fmt.Println(rulespec)   ---->  [-o ens160 -d 10.222.119.72 -s 10.222.88.202 -j MARK --set-mark 1000]
+	//fmt.Println(strings.Replace(strings.Trim(fmt.Sprint(rulespec), "[]"), " ", ",", -1))
+	// -----> -o,ens160,-d,10.222.119.72,-s,10.222.88.202,-j,MARK,--set-mark,1000
+	
 
-	if err != nil {
-		return errors.New(fmt.Sprintf("InsertRule(): %s \n", err.Error()))
+	err1 := this.qosIptables.Insert(table, chain, pos, strings.Replace(strings.Trim(fmt.Sprint(rulespec), "[]"), " ", ",", -1),)
+	//err := this.InsertRule("mangle", "POSTROUTING", 1, "-o", "ens160", "-d", "10.222.119.72", "-s", "10.222.88.202", "-j", "MARK", "--set-mark", "1000",)
+	if err1 != nil {
+		return errors.New(fmt.Sprintf("InsertRule(): %s \n", err1.Error()))
 	}
-	*/
 	return nil
 }
 
