@@ -68,6 +68,7 @@ func (this *QosController) DeleteRule(srcIP, dstIP, mark string) error {
 	if err != nil {
 		return errors.New(fmt.Sprintf("InsertRule(): %s \n", err.Error()))
 	}
+	return nil 
 }
 
 
