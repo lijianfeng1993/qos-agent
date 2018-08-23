@@ -1,10 +1,10 @@
+
 package agent
 
 import (
 	"github.com/coreos/go-iptables/iptables"
 	"errors"
 	"fmt"
-    "strings"
 )
 
 type QosController struct {
@@ -13,25 +13,13 @@ type QosController struct {
 }
 
 func NewQosController() *QosController {
-	return &QosController{
+	qosIptables, _ := iptables.NewWithProtocol(iptables.ProtocolIPv4)
+	qoscon := &QosController{
+		qosIptables: qosIptables,
+		qosTc: "tc",
 	}
+	return qoscon
 }
-
-func (this *QosController) InitIptables() (err error){
-
-	this.qosIptables, err = iptables.NewWithProtocol(iptables.ProtocolIPv4)
-	if err != nil {
-		return  errors.New(fmt.Sprintf("NewQosIptables() is failed. \n" + "   NewWithProtocol(): %s", err.Error()))
-	}
-
-	return nil
-}
-
-/*
-func (this *QosController) InitTc() (err error) {
-
-}
-*/
 
 func (this *QosController) GetChains(table string) (chans []string, err error) {
 	chans, err = this.qosIptables.ListChains(table)
@@ -42,19 +30,31 @@ func (this *QosController) GetChains(table string) (chans []string, err error) {
 	return chans, nil
 }
 
-func (this *QosController) InsertRule(table string, chain string, pos int, rulespec ...string) error{
+func (this *QosController) InsertRule(srcIp, dstIp, mark string) error{
 	//fmt.Println(rulespec)   ---->  [-o ens160 -d 10.222.119.72 -s 10.222.88.202 -j MARK --set-mark 1000]
 	//fmt.Println(strings.Replace(strings.Trim(fmt.Sprint(rulespec), "[]"), " ", ",", -1))
 	// -----> -o,ens160,-d,10.222.119.72,-s,10.222.88.202,-j,MARK,--set-mark,1000
-	fmt.Println()
-
+	//fmt.Println()
 	//err := this.qosIptables.Insert(table, chain, pos, strings.Replace(strings.Trim(fmt.Sprint(rulespec), "[]"), " ", ",", -1),)
-	//err := this.qosIptables.Insert("mangle", "POSTROUTING", 1, "-o", "ens160", "-d", "10.222.119.72", "-s", "10.222.88.202", "-j", "MARK", "--set-mark", "1000",)
-	//if err != nil {
-	//	return errors.New(fmt.Sprintf("InsertRule(): %s \n", err.Error()))
-	//}
-	//return nil
+
+	err := this.qosIptables.Insert(
+		"mangle",
+		"POSTROUTING",
+		1,
+		"-o",
+		"ens160",
+		"-d", fmt.Sprintf("%s", dstIp),
+		"-s", fmt.Sprintf("%s", srcIp),
+		"-j", "MARK",
+		"--set-mark", fmt.Sprintf("%s", mark),)
+
+	if err != nil {
+		return errors.New(fmt.Sprintf("InsertRule(): %s \n", err.Error()))
+	}
+
+	return nil
 }
+
 
 
 
